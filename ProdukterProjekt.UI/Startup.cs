@@ -50,9 +50,9 @@ namespace ProdukterProjekt.UI
                         Description = "Product Swag to be changed",
                         Version = "v1"
                     });
-                var fileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var filePath = Path.Combine(AppContext.BaseDirectory, fileName);
-                opt.IncludeXmlComments(filePath);
+                //var fileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                //var filePath = Path.Combine(AppContext.BaseDirectory, fileName);
+                //opt.IncludeXmlComments(filePath);
             });
         }
 
@@ -69,7 +69,6 @@ namespace ProdukterProjekt.UI
 
                     var product1 = ctx.Add(new Product()
                     {
-                        Id = 1,
                         Name = "1",
                         Price = 1.0,
                         Color = "2",

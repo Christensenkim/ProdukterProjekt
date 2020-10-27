@@ -40,9 +40,9 @@ namespace ProdukterProjekt.Core.ApplicationService.Services
             return _ProductRepo.ReadProducts();
         }
 
-        public Product UpdateProduct(Product p)
+        public Product UpdateProduct(int id, Product p)
         {
-            return _ProductRepo.EditProduct(p);
+            return _ProductRepo.EditProduct(id, p);
         }
     }
 }

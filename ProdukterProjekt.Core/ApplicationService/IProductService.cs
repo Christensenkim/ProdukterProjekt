@@ -13,6 +13,6 @@ namespace ProdukterProjekt.Core.ApplicationService
         public IEnumerable<Product> GetProducts();
         public Product CreateProduct(Product p);
         public Product DeleteProduct(int id);
-        public Product UpdateProduct(Product p);
+        public Product UpdateProduct(int id, Product p);
     }
 }

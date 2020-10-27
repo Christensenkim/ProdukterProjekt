@@ -11,8 +11,7 @@ namespace ProdukterProjekt.Core.DomainService
         public List<Product> GetProductByFilter();
         public IEnumerable<Product> ReadProducts();
         public Product CreateProduct(Product p);
-        public Product EditProduct(Product p);
+        public Product EditProduct(int id, Product p);
         public Product DeleteProduct(int id);
-        public List<Product> GetProductsByFilter();
     }
 }
