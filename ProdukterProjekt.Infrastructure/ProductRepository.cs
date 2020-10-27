@@ -42,7 +42,9 @@ namespace ProdukterProjekt.Infrastructure.Data
                 productFromDB.Ptype = p.Ptype;
                 productFromDB.CreatedDate = p.CreatedDate;
 
-                return productFromDB;
+                var product = _ctx.Update(productFromDB).Entity;
+                _ctx.SaveChanges();
+                return product;
             }
             return null;
         }

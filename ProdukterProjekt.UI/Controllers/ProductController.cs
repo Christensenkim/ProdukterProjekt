@@ -38,9 +38,9 @@ namespace ProdukterProjekt.UI.Controllers
         /// <returns>Array of Products</returns>
         // GET api/<ProductController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public Product Get(int id)
         {
-            return "value";
+            return _productservice.GetProductByID(id);
         }
 
         // POST api/<ProductController>
