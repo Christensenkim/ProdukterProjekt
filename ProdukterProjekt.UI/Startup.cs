@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -33,6 +34,8 @@ namespace ProdukterProjekt.UI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(JwtBearerDefaults)
+
             services.AddDbContext<ProductContext>(
                 opt => opt.UseSqlite("Data Source=Product.db"));
 
@@ -67,14 +70,18 @@ namespace ProdukterProjekt.UI
                     var ctx = scope.ServiceProvider.GetService<ProductContext>();
                     ctx.Database.EnsureCreated();
 
-                    var product1 = ctx.Add(new Product()
+                    var user1 = ctx.Add(new User()
                     {
-                        Name = "1",
-                        Price = 1.0,
-                        Color = "2",
-                        Ptype = "3",
-                        CreatedDate = DateTime.Now
-                    }).Entity;
+                         userName = "User",
+                         password = "1234",
+                         isAdmin = false
+                    });
+                    var user2 = ctx.Add(new User()
+                    {
+                        userName = "Admin",
+                        password = "1234",
+                        isAdmin = true
+                    });
                 }
             }
 
