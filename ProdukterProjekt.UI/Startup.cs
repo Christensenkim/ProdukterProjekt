@@ -14,11 +14,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using ProdukterProjekt.Core.ApplicationService;
 using ProdukterProjekt.Core.ApplicationService.Services;
 using ProdukterProjekt.Core.DomainService;
 using ProdukterProjekt.Core.Entity;
 using ProdukterProjekt.Infrastructure.Data;
+using ProdukterProjekt.UI.Helpers;
 
 namespace ProdukterProjekt.UI
 {
@@ -34,7 +36,7 @@ namespace ProdukterProjekt.UI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(JwtBearerDefaults)
+            
 
             services.AddDbContext<ProductContext>(
                 opt => opt.UseSqlite("Data Source=Product.db"));
@@ -43,6 +45,19 @@ namespace ProdukterProjekt.UI
             services.AddScoped<IProductService, ProductService>();
 
             services.AddControllers();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+            {
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = JWTSecurityKey.Key,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromMinutes(5)
+                };
+            });
 
             services.AddSwaggerGen(opt =>
             {
@@ -68,13 +83,14 @@ namespace ProdukterProjekt.UI
                 using (var scope = app.ApplicationServices.CreateScope())
                 {
                     var ctx = scope.ServiceProvider.GetService<ProductContext>();
+                    //ctx.Database.EnsureDeleted();
                     ctx.Database.EnsureCreated();
 
                     var user1 = ctx.Add(new User()
                     {
-                         userName = "User",
-                         password = "1234",
-                         isAdmin = false
+                        userName = "User",
+                        password = "1234",
+                        isAdmin = false
                     });
                     var user2 = ctx.Add(new User()
                     {
@@ -82,8 +98,20 @@ namespace ProdukterProjekt.UI
                         password = "1234",
                         isAdmin = true
                     });
+                    var product1 = ctx.Add(new Product
+                    {
+                        Name = "htrhpr",
+                        Color = "shtrh",
+                        CreatedDate = DateTime.Now,
+                        Price = 2.0,
+                        Ptype = "sgnfgnf"
+                    });
+
+                    ctx.SaveChanges();
                 }
             }
+
+
 
             app.UseHttpsRedirection();
 
@@ -103,6 +131,8 @@ namespace ProdukterProjekt.UI
                 opt.SwaggerEndpoint("/swagger/v1/swagger.json", "swagger to be changed");
                 opt.RoutePrefix = "";
             });
+
+            app.UseAuthentication();
         }
     }
 }

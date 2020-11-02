@@ -4,7 +4,9 @@ using System.Text;
 
 namespace ProdukterProjekt.Core.Entity
 {
-    class LoginModule
+    public class LoginModule
     {
+        public string username { get; set; }
+        public string password { get; set; }
     }
 }

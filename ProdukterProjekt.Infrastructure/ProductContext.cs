@@ -12,5 +12,6 @@ namespace ProdukterProjekt.Infrastructure.Data
             : base(opt) { }
 
         public DbSet<Product> ProductsTable { get; set; }
+        public DbSet<User> UserTable { get; set; }
     }
 }

@@ -16,5 +16,10 @@ namespace ProdukterProjekt.UI.Helpers
         {
             get { return new SymmetricSecurityKey(secretBytes); }
         }
+
+        public static void SetSecret(string secret)
+        {
+            secretBytes = Encoding.UTF8.GetBytes(secret);
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProdukterProjekt.Core.ApplicationService;
 using ProdukterProjekt.Core.Entity;
@@ -25,6 +26,7 @@ namespace ProdukterProjekt.UI.Controllers
         }
 
         // GET: api/<ProductController>
+        [Authorize]
         [HttpGet]
         public IEnumerable<Product> Get()
         {
@@ -44,6 +46,7 @@ namespace ProdukterProjekt.UI.Controllers
         }
 
         // POST api/<ProductController>
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public void Post([FromBody] Product p)
         {
@@ -51,6 +54,7 @@ namespace ProdukterProjekt.UI.Controllers
         }
 
         // PUT api/<ProductController>/5
+        [Authorize(Roles = "Administrator")]
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] Product p)
         {
@@ -58,6 +62,7 @@ namespace ProdukterProjekt.UI.Controllers
         }
 
         // DELETE api/<ProductController>/5
+        [Authorize(Roles = "Administrator")]
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
