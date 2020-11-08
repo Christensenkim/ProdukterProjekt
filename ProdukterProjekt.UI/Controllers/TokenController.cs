@@ -36,7 +36,7 @@ namespace ProdukterProjekt.UI.Controllers
                 return Unauthorized();
             }
 
-            if(!VerifyPasswordHash(module.password, user.PasswordHash, user.PasswordSalt))
+            if(!VerifyPasswordHash(module.password, user.passwordHash, user.passwordSalt))
             {
                 return Unauthorized();
             }
