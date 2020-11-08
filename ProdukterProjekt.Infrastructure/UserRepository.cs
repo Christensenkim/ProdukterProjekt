@@ -41,7 +41,6 @@ namespace ProdukterProjekt.Infrastructure.Data
             if (UserFromDB != null)
             {
                 UserFromDB.userName = u.userName;
-                UserFromDB.password = u.password;
                 UserFromDB.isAdmin = u.isAdmin;
 
                 var product = _ctx.Update(UserFromDB).Entity;
