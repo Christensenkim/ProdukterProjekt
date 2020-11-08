@@ -36,7 +36,7 @@ namespace ProdukterProjekt.UI.Controllers
                 return Unauthorized();
             }
 
-            if (!module.password.Equals(user.password))
+            if(!VerifyPasswordHash(module.password, user.PasswordHash, user.PasswordSalt))
             {
                 return Unauthorized();
             }
@@ -46,6 +46,22 @@ namespace ProdukterProjekt.UI.Controllers
                 username = user.userName,
                 token = GenerateToken(user)
             });
+        }
+
+        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                for (int i = 0; i < computedHash.Length; i++)
+                {
+                    if(computedHash[i] != passwordHash[i])
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
         }
 
         private object GenerateToken(User user)
