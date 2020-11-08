@@ -86,16 +86,25 @@ namespace ProdukterProjekt.UI
                     //ctx.Database.EnsureDeleted();
                     ctx.Database.EnsureCreated();
 
+                    string password = "1234";
+                    byte[] passwordHashUser, passwordSaltUser, passwordHashAdmin, passwordSaltAdmin;
+
+                    CreatePasswordHash(password, out passwordHashUser, out passwordSaltUser);
+                    CreatePasswordHash(password, out passwordHashAdmin, out passwordSaltAdmin);
+
+
                     var user1 = ctx.Add(new User()
                     {
                         userName = "User",
-                        password = "1234",
+                        passwordHash = passwordHashUser,
+                        passwordSalt = passwordSaltUser,
                         isAdmin = false
                     });
                     var user2 = ctx.Add(new User()
                     {
                         userName = "Admin",
-                        password = "1234",
+                        passwordHash = passwordHashAdmin,
+                        passwordSalt = passwordSaltAdmin,
                         isAdmin = true
                     });
                     var product1 = ctx.Add(new Product
@@ -133,6 +142,15 @@ namespace ProdukterProjekt.UI
             });
 
             app.UseAuthentication();
+        }
+
+        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
+            using( var hmac = new System.Security.Cryptography.HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
         }
     }
 }
