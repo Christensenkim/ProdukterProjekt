@@ -26,16 +26,19 @@ namespace ProdukterProjekt.UI
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            Environment = env;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services, IWebHostEnvironment env)
         {
+<<<<<<< Updated upstream
             byte[] secretBytes = new byte[40];
             Random rand = new Random();
             rand.NextBytes(secretBytes);
@@ -55,6 +58,19 @@ namespace ProdukterProjekt.UI
 
             services.AddDbContext<ProductContext>(
                 opt => opt.UseSqlite("Data Source=Product.db"));
+=======
+
+            if (Environment.IsDevelopment())
+            {
+                services.AddDbContext<ProductContext>(
+                    opt => opt.UseSqlite("Data Source=Product.db"));
+            }
+            else
+            {
+                services.AddDbContext<ProductContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
+            }
+
+>>>>>>> Stashed changes
 
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddScoped<IProductService, ProductService>();
