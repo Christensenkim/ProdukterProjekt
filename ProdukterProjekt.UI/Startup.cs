@@ -36,15 +36,9 @@ namespace ProdukterProjekt.UI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
-
-            services.AddDbContext<ProductContext>(
-                opt => opt.UseSqlite("Data Source=Product.db"));
-
-            services.AddTransient<IProductRepository, ProductRepository>();
-            services.AddScoped<IProductService, ProductService>();
-
-            services.AddControllers();
+            byte[] secretBytes = new byte[40];
+            Random rand = new Random();
+            rand.NextBytes(secretBytes);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
             {
@@ -53,11 +47,28 @@ namespace ProdukterProjekt.UI
                     ValidateAudience = false,
                     ValidateIssuer = false,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = JWTSecurityKey.Key,
+                    IssuerSigningKey = new SymmetricSecurityKey(secretBytes),
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.FromMinutes(5)
                 };
             });
+
+            services.AddDbContext<ProductContext>(
+                opt => opt.UseSqlite("Data Source=Product.db"));
+
+            services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddSingleton<IAuthenicationHelper>(new AuthenicationHelper(secretBytes));
+
+            services.AddCors(opt =>
+                opt.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                })
+            );
 
             services.AddSwaggerGen(opt =>
             {
@@ -72,6 +83,8 @@ namespace ProdukterProjekt.UI
                 //var filePath = Path.Combine(AppContext.BaseDirectory, fileName);
                 //opt.IncludeXmlComments(filePath);
             });
+
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,56 +95,16 @@ namespace ProdukterProjekt.UI
                 app.UseDeveloperExceptionPage();
                 using (var scope = app.ApplicationServices.CreateScope())
                 {
+                    var services = scope.ServiceProvider;
                     var ctx = scope.ServiceProvider.GetService<ProductContext>();
-                    //ctx.Database.EnsureDeleted();
+
+                    ctx.Database.EnsureDeleted();
                     ctx.Database.EnsureCreated();
 
-                    string password = "1234";
-                    byte[] passwordHashUser, passwordSaltUser, passwordHashAdmin, passwordSaltAdmin;
-
-                    CreatePasswordHash(password, out passwordHashUser, out passwordSaltUser);
-                    CreatePasswordHash(password, out passwordHashAdmin, out passwordSaltAdmin);
-
-
-                    var user1 = ctx.Add(new User()
-                    {
-                        userName = "User",
-                        passwordHash = passwordHashUser,
-                        passwordSalt = passwordSaltUser,
-                        isAdmin = false
-                    });
-                    var user2 = ctx.Add(new User()
-                    {
-                        userName = "Admin",
-                        passwordHash = passwordHashAdmin,
-                        passwordSalt = passwordSaltAdmin,
-                        isAdmin = true
-                    });
-                    var product1 = ctx.Add(new Product
-                    {
-                        Name = "htrhpr",
-                        Color = "shtrh",
-                        CreatedDate = DateTime.Now,
-                        Price = 2.0,
-                        Ptype = "sgnfgnf"
-                    });
-
+                    ctx.SeedDB();
                     ctx.SaveChanges();
                 }
             }
-
-
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
 
             app.UseSwagger();
 
@@ -141,16 +114,27 @@ namespace ProdukterProjekt.UI
                 opt.RoutePrefix = "";
             });
 
+
+            app.UseHttpsRedirection();
+
+            app.UseRouting();
+
+            app.UseCors();
+
             app.UseAuthentication();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
+
+
+
         }
 
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            using( var hmac = new System.Security.Cryptography.HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            }
-        }
+
     }
 }

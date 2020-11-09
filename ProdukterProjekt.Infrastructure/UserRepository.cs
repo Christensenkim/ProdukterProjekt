@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ProdukterProjekt.Infrastructure.Data
 {
-    class UserRepository : IUserRepository
+    public class UserRepository : IUserRepository
     {
         readonly ProductContext _ctx;
 
