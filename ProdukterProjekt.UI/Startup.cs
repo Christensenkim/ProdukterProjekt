@@ -1,24 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using ProdukterProjekt.Core.ApplicationService;
 using ProdukterProjekt.Core.ApplicationService.Services;
 using ProdukterProjekt.Core.DomainService;
-using ProdukterProjekt.Core.Entity;
 using ProdukterProjekt.Infrastructure.Data;
 using ProdukterProjekt.UI.Helpers;
 
@@ -36,9 +27,8 @@ namespace ProdukterProjekt.UI
         public IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services, IWebHostEnvironment env)
+        public void ConfigureServices(IServiceCollection services)
         {
-<<<<<<< Updated upstream
             byte[] secretBytes = new byte[40];
             Random rand = new Random();
             rand.NextBytes(secretBytes);
@@ -58,19 +48,6 @@ namespace ProdukterProjekt.UI
 
             services.AddDbContext<ProductContext>(
                 opt => opt.UseSqlite("Data Source=Product.db"));
-=======
-
-            if (Environment.IsDevelopment())
-            {
-                services.AddDbContext<ProductContext>(
-                    opt => opt.UseSqlite("Data Source=Product.db"));
-            }
-            else
-            {
-                services.AddDbContext<ProductContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
-            }
-
->>>>>>> Stashed changes
 
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddScoped<IProductService, ProductService>();
@@ -114,7 +91,20 @@ namespace ProdukterProjekt.UI
                     var services = scope.ServiceProvider;
                     var ctx = scope.ServiceProvider.GetService<ProductContext>();
 
-                    ctx.Database.EnsureDeleted();
+                    //ctx.Database.EnsureDeleted();
+                    ctx.Database.EnsureCreated();
+
+                    ctx.SeedDB();
+                    ctx.SaveChanges();
+                }
+            }else
+            {
+                using (var scope = app.ApplicationServices.CreateScope())
+                {
+                    var services = scope.ServiceProvider;
+                    var ctx = scope.ServiceProvider.GetService<ProductContext>();
+
+                    //ctx.Database.EnsureDeleted();
                     ctx.Database.EnsureCreated();
 
                     ctx.SeedDB();
@@ -129,7 +119,6 @@ namespace ProdukterProjekt.UI
                 opt.SwaggerEndpoint("/swagger/v1/swagger.json", "swagger to be changed");
                 opt.RoutePrefix = "";
             });
-
 
             app.UseHttpsRedirection();
 

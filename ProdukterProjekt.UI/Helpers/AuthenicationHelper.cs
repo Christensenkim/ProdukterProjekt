@@ -41,7 +41,7 @@ namespace ProdukterProjekt.UI.Helpers
                 new JwtHeader(new SigningCredentials(
                     new SymmetricSecurityKey(secretBytes),
                     SecurityAlgorithms.HmacSha256)),
-                new JwtPayload(null, null, claims.ToArray(), DateTime.Now, DateTime.Now.AddMinutes(10)));
+                new JwtPayload(null, null, claims.ToArray(), DateTime.Now, DateTime.Now.AddMinutes(120)));
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

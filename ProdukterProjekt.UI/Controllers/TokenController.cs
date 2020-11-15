@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using ProdukterProjekt.Core.ApplicationService;
 using ProdukterProjekt.Core.Entity;
@@ -25,14 +26,14 @@ namespace ProdukterProjekt.UI.Controllers
         [HttpPost]
         public IActionResult Login([FromBody] LoginModule module)
         {
-            var user = _userService.ReadUsers().FirstOrDefault(u => u.userName == module.username);
+            var user = _userService.ReadUsers().FirstOrDefault(u => u.userName == module.Username);
 
             if(user == null)
             {
                 return Unauthorized();
             }
 
-            if(!authenicationHelper.VerifyPasswordHash(module.password, user.passwordHash, user.passwordSalt))
+            if(!authenicationHelper.VerifyPasswordHash(module.Password, user.passwordHash, user.passwordSalt))
             {
                 return Unauthorized();
             }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProdukterProjekt.Core.ApplicationService;
@@ -39,6 +36,7 @@ namespace ProdukterProjekt.UI.Controllers
         /// <param name="id"></param>
         /// <returns>Array of Products</returns>
         // GET api/<ProductController>/5
+        [Authorize(Roles = "Administrator")]
         [HttpGet("{id}")]
         public Product Get(int id)
         {
