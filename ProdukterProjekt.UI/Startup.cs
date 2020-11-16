@@ -91,7 +91,7 @@ namespace ProdukterProjekt.UI
                     var services = scope.ServiceProvider;
                     var ctx = scope.ServiceProvider.GetService<ProductContext>();
 
-                    //ctx.Database.EnsureDeleted();
+                    ctx.Database.EnsureDeleted();
                     ctx.Database.EnsureCreated();
 
                     ctx.SeedDB();
